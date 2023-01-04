@@ -8,26 +8,6 @@ class Card {
     this.number = number;
     this.suit = suit;
   }
-
-  static display(hand, amount) {
-    let index = 0;
-    let edges = " +-----+";
-    let sides = " |     |";
-    let middle = ` |  ${hand[index]}  |`;
-
-    for (let count = 1; count <= amount; count += 1) {
-      edges = edges.repeat(count);
-      sides = sides.repeat(count);
-      middle = middle.repeat(count);
-      index += 1;
-    }
-
-    console.log(edges);
-    console.log(sides);
-    console.log(middle);
-    console.log(sides);
-    console.log(edges);
-  }
 }
 
 class Deck {
