@@ -51,7 +51,7 @@ rules:
     - 2
     - SwitchCase: 1
   keyword-spacing: error
-  linebreak-style: error
+  linebreak-style: [error, windows]
   max-depth: error
   max-len:
     - error

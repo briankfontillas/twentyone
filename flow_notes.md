@@ -98,3 +98,11 @@ dealCards:
 
 for each participant:
   the array value within the hand property adds the last card of the deck array
+
+
+## Show dealers hand hidden one card
+
+- need to be able to show the display of each card, and hide the dealer hand at the same time
+- As long as dealers hidden property is valued at true, display a hidden card
+
+- How will we log each display?
