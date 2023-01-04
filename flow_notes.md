@@ -85,3 +85,16 @@ main method
 3. for each element within the array, create a new Card where the first arg is the number, and the second arg is the current object key name
   - push the new card object into the empty array
 4. After iteration, return the "empty" array
+
+## Deal cards
+
+- method is currently in main game class
+- method would point to its "Deck" property
+  - deck property's hand property would be modified
+
+- we need to take the current deck array, remove a random card (obj) and add it to the hand
+
+dealCards:
+
+for each participant:
+  the array value within the hand property adds the last card of the deck array

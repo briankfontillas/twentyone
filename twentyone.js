@@ -43,8 +43,9 @@ class Deck {
 }
   
 class Participant {
+
   constructor() {
-    // this.cards = [];
+    this.hand = [];
   }
 
   hit() {
@@ -66,6 +67,7 @@ class Participant {
   
 class Player extends Participant {
   constructor() {
+    super();
       //STUB
       // What sort of state does a player need?
       // Score? Hand? Amount of money available?
@@ -79,6 +81,7 @@ class Dealer extends Participant {
       //STUB
       // What sort of state does a dealer need?
       // Score? Hand? Deck of cards? Bow tie?
+    super();
   }
   
   hide() {
@@ -93,6 +96,8 @@ class Dealer extends Participant {
 class TwentyOneGame {
   constructor() {
     this.deck = new Deck();
+    this.player = new Player();
+    this.dealer = new Dealer();
   }
   
   initializeDeck() {
@@ -107,11 +112,13 @@ class TwentyOneGame {
     });
 
     this.deck.cards = allCards;
+    this.deck.shuffle();
   }
 
   start() {
       //SPIKE
     this.displayWelcomeMessage();
+    this.initializeDeck();
     this.dealCards();
     this.showCards();
     this.playerTurn();
@@ -121,7 +128,11 @@ class TwentyOneGame {
   }
   
   dealCards() {
-      //STUB
+    const players = [this.player, this.dealer];
+
+    players.forEach(player => {
+      player.hand.push(this.deck.cards.pop(), this.deck.cards.pop());
+    });
   }
   
   showCards() {
