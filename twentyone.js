@@ -67,7 +67,7 @@ class Participant {
   }
 
   isBusted() {
-    return this.hand
+    return this.score() > 21;
   }
 
   score() {
