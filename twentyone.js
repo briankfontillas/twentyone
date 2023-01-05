@@ -6,10 +6,16 @@ const SHUFFLE = require('shuffle-array');
 class Card {
   static topBottom = " +-------+";
   static sides = " |       |";
+  static FACE_CARDS = ["K", "Q", "J"];
+  static ACE = "A";
 
   constructor(number, suit) {
     this.number = number;
     this.suit = suit;
+  }
+
+  static convertAce(number) {
+    return number > 21 ? 1 : 11;
   }
 }
 
@@ -61,11 +67,23 @@ class Participant {
   }
 
   isBusted() {
-
+    return this.hand
   }
 
   score() {
-    //STUB
+    return this.hand.reduce((prev, current) => {
+      let currentNumber;
+
+      if (current["number"] === Card.ACE) {
+        currentNumber = Card.convertAce(prev);
+      } else if (Card.FACE_CARDS.includes(current["number"])) {
+        currentNumber = 10;
+      } else {
+        currentNumber = current["number"];
+      }
+
+      return prev + currentNumber;
+    }, 0);
   }
 }
 
