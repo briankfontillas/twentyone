@@ -49,6 +49,7 @@ class Participant {
 
   constructor() {
     this.hand = [];
+    this.done = false;
   }
 
   hit(deck) {
@@ -56,11 +57,11 @@ class Participant {
   }
 
   stay() {
-    //STUB
+    this.done = true;
   }
 
   isBusted() {
-    //STUB
+
   }
 
   score() {
@@ -71,9 +72,6 @@ class Participant {
 class Player extends Participant {
   constructor() {
     super();
-    //STUB
-    // What sort of state does a player need?
-    // Score? Hand? Amount of money available?
   }
 }
 
@@ -121,9 +119,14 @@ class TwentyOneGame {
     this.displayWelcomeMessage();
     this.initializeDeck();
     this.dealCards();
-    this.showCards(this.dealer);
-    this.showCards(this.player);
-    this.playerTurn();
+
+    while (true) {
+      this.showCards(this.dealer);
+      this.showCards(this.player);
+      this.playerTurn();
+      if (this.player.done) break;
+    }
+
     this.dealerTurn();
     this.displayResult();
     this.displayGoodbyeMessage();
@@ -140,15 +143,17 @@ class TwentyOneGame {
   formatStructure(player) {
     let index = 0;
     let playerHand = JSON.parse(JSON.stringify(player.hand));
-    let edges = Card.topBottom;
-    let sides = Card.sides;
     let middleLine = [];
+    let edges;
+    let sides;
 
     if (player.hidden) playerHand[0]["number"] = "?";
 
     for (let count = 1; count <= playerHand.length; count += 1) {
       let number = playerHand[index]["number"];
       let middle = number !== 10 ? ` |   ${number}   |` : ` |   ${number}  |`;
+      [edges, sides] = [Card.topBottom, Card.sides];
+
       edges = edges.repeat(count);
       sides = sides.repeat(count);
       middleLine.push(middle);
@@ -184,7 +189,10 @@ class TwentyOneGame {
       if (["h", "hi", "hit"].includes(answer.toLowerCase()[0])) {
         this.player.hit(this.deck.cards);
         break;
-      } else if (["s", "st", "sta", "stay"].includes(answer.toLowerCase()[0])) break;
+      } else if (["s", "st", "sta", "stay"].includes(answer.toLowerCase()[0])) {
+        this.player.stay();
+        break;
+      }
 
       console.log("Thats not a valid answer!");
     }
