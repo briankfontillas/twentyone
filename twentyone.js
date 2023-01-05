@@ -4,6 +4,9 @@ const readline = require('readline-sync');
 const SHUFFLE = require('shuffle-array');
 
 class Card {
+  static topBottom = " +-------+";
+  static sides = " |       |";
+
   constructor(number, suit) {
     this.number = number;
     this.suit = suit;
@@ -75,18 +78,14 @@ class Player extends Participant {
 }
 
 class Dealer extends Participant {
-  // Very similar to a Player; do we need this?
 
   constructor() {
-    //STUB
-    // What sort of state does a dealer need?
-    // Score? Hand? Deck of cards? Bow tie?
     super();
     this.hidden = true;
   }
 
   hide() {
-    //STUB
+    this.hand[0] = "?";
   }
 
   reveal() {
@@ -99,6 +98,7 @@ class TwentyOneGame {
     this.deck = new Deck();
     this.player = new Player();
     this.dealer = new Dealer();
+    this.displayStructure = null;
   }
 
   initializeDeck() {
@@ -121,8 +121,8 @@ class TwentyOneGame {
     this.displayWelcomeMessage();
     this.initializeDeck();
     this.dealCards();
-    this.showCards(this.formatStructure(this.dealer));
-    this.showCards(this.formatStructure(this.player));
+    this.showCards(this.dealer);
+    this.showCards(this.player);
     this.playerTurn();
     this.dealerTurn();
     this.displayResult();
@@ -139,33 +139,38 @@ class TwentyOneGame {
 
   formatStructure(player) {
     let index = 0;
-    let amount = player.hand.length;
-    let number = player.hand[index]["number"];
-    let edges = " +-------+";
-    let sides = " |       |";
-    let middle = number !== 10 ? ` |   ${number}   |` : ` |   ${number}  |`;
+    let playerHand = JSON.parse(JSON.stringify(player.hand));
+    let edges = Card.topBottom;
+    let sides = Card.sides;
+    let middleLine = [];
 
-    for (let count = 1; count <= amount; count += 1) {
+    if (player.hidden) playerHand[0]["number"] = "?";
+
+    for (let count = 1; count <= playerHand.length; count += 1) {
+      let number = playerHand[index]["number"];
+      let middle = number !== 10 ? ` |   ${number}   |` : ` |   ${number}  |`;
       edges = edges.repeat(count);
       sides = sides.repeat(count);
-      middle = middle.repeat(count);
+      middleLine.push(middle);
       index += 1;
     }
 
-    return [edges, sides, middle, player];
+    this.displayStructure = [edges, sides, middleLine.join("")];
   }
 
-  showCards(structure) {
+  showCards(player) {
+    this.formatStructure(player);
+
     console.log("");
-    console.log(structure[3] === this.player ? "Players hand:" : "Dealers hand:");
+    console.log(player === this.player ? "Players hand:" : "Dealers hand:");
     console.log("");
-    console.log(structure[0]);
-    console.log(structure[1]);
-    console.log(structure[1]);
-    console.log(structure[2]);
-    console.log(structure[1]);
-    console.log(structure[1]);
-    console.log(structure[0]);
+    console.log(this.displayStructure[0]);
+    console.log(this.displayStructure[1]);
+    console.log(this.displayStructure[1]);
+    console.log(this.displayStructure[2]);
+    console.log(this.displayStructure[1]);
+    console.log(this.displayStructure[1]);
+    console.log(this.displayStructure[0]);
   }
 
   playerTurn() {
