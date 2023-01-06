@@ -56,6 +56,7 @@ class Participant {
   constructor() {
     this.hand = [];
     this.done = false;
+    //score property: this.score = 0;
   }
 
   hit(deck) {
@@ -71,19 +72,20 @@ class Participant {
   }
 
   score() {
-    return this.hand.reduce((prev, current) => {
-      let currentNumber;
+    // return this.hand.reduce((prev, current) => {
+    //   let currentNumber;
 
-      if (current["number"] === Card.ACE) {
-        currentNumber = Card.convertAce(prev);
-      } else if (Card.FACE_CARDS.includes(current["number"])) {
-        currentNumber = 10;
-      } else {
-        currentNumber = current["number"];
-      }
+    //   if (current["number"] === Card.ACE) {
+    //     currentNumber = Card.convertAce(prev);
+    //   } else if (Card.FACE_CARDS.includes(current["number"])) {
+    //     currentNumber = 10;
+    //   } else {
+    //     currentNumber = current["number"];
+    //   }
 
-      return prev + currentNumber;
-    }, 0);
+    //   return prev + currentNumber;
+    // }, 0);
+    //STUB
   }
 }
 
@@ -142,7 +144,7 @@ class TwentyOneGame {
       this.showCards(this.dealer);
       this.showCards(this.player);
       this.playerTurn();
-      if (this.player.done) break;
+      if (this.player.done || this.player.isBusted()) break;
     }
 
     this.dealerTurn();
@@ -229,7 +231,15 @@ class TwentyOneGame {
   }
 
   displayResult() {
-    //STUB
+    //stub
+    //If i bust, i need only my final hand to display, then i need a message saying that I busted, then a msg saying i lost
+    //If dealer busts, i need to display dealers final hand (revealed), and my final hand and a message stating dealer busted
+      //then a msg saying i won
+    //if nobody busts, the player with the highest score wins and a win message for that player appears
+  }
+
+  playAgain() {
+    //Stub
   }
 }
 
