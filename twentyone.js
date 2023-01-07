@@ -48,6 +48,7 @@ class Deck {
   deal() {
     //STUB
     // does the dealer or the deck deal?
+    // Do we need this since we already have the hit function?
   }
 }
 
@@ -56,7 +57,7 @@ class Participant {
   constructor() {
     this.hand = [];
     this.done = false;
-    //score property: this.score = 0;
+    this.points = 0;
   }
 
   hit(deck) {
@@ -65,6 +66,14 @@ class Participant {
 
   stay() {
     this.done = true;
+  }
+
+  getValues() {
+    return this.hand.map(card => card["number"]);
+  }
+
+  hasTwentyOne() {
+    return this.score() === 21;
   }
 
   isBusted() {
@@ -86,6 +95,37 @@ class Participant {
     //   return prev + currentNumber;
     // }, 0);
     //STUB
+    //--------------------
+    // we have an array [2, 4, A, A, K]
+    // will have an indicator that an ace has been added
+    // iterate, adding all values
+      // if the element is a face card, add 10
+      // if the element an ace,
+        //if indicator is false
+          // set to true
+          // add 11
+        //if indicator is true
+          // add 1
+    // after total is made, if value is over 21, subtract 10 and return value
+    // if not, return value
+
+    let hasAce = false;
+
+    let totalValue = this.getValues().reduce((total, currentValue) => {
+
+      if (Card.FACE_CARDS.includes(currentValue)) {
+        currentValue = 10;
+      } else if (currentValue === Card.ACE && !hasAce) {
+        hasAce = true;
+        currentValue = 11;
+      } else if (currentValue === Card.ACE && hasAce) {
+        currentValue = 1;
+      }
+
+      return total + currentValue;
+    }, 0);
+
+    return totalValue > 21 && this.getValues().includes(Card.ACE) ? totalValue - 10 : totalValue;
   }
 }
 
@@ -141,10 +181,12 @@ class TwentyOneGame {
     this.dealCards();
 
     while (true) {
-      this.showCards(this.dealer);
-      this.showCards(this.player);
-      this.playerTurn();
-      if (this.player.done || this.player.isBusted()) break;
+      if (this.player.done || this.player.isBusted() || this.player.hasTwentyOne()) {
+        this.showAllCards();
+        break;
+      }
+      this.showAllCards();
+      this.playerTurn();;
     }
 
     this.dealerTurn();
@@ -158,6 +200,15 @@ class TwentyOneGame {
     players.forEach(player => {
       player.hand.push(this.deck.cards.pop(), this.deck.cards.pop());
     });
+  }
+
+  showAllCards() {
+    let dealerScoreText = this.dealer.hidden ? "?" : this.dealer.score();
+
+    this.showCards(this.dealer);
+    this.showCards(this.player);
+    console.log(`Dealers score: ${dealerScoreText} | Players score: ${this.player.score()}`);
+    console.log("");
   }
 
   formatStructure(player) {
