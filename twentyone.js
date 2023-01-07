@@ -158,7 +158,7 @@ class TwentyOneGame {
       this.showAllCards();
       this.playerTurn();;
     }
-
+    this.dealer.reveal();
     this.dealerTurn();
     this.displayResult();
     this.displayGoodbyeMessage();
@@ -252,11 +252,18 @@ class TwentyOneGame {
   }
 
   displayResult() {
-    //stub
-    //If i bust, i need only my final hand to display, then i need a message saying that I busted, then a msg saying i lost
-    //If dealer busts, i need to display dealers final hand (revealed), and my final hand and a message stating dealer busted
-      //then a msg saying i won
-    //if nobody busts, the player with the highest score wins and a win message for that player appears
+
+    if (this.player.isBusted()) {
+      console.log("You bust! Game over, you lose!");
+    } else if (this.dealer.isBusted()) {
+      console.log("Dealer bust! you Win!");
+    } else if (!this.player.isBusted() && !this.dealer.isBusted()) {
+      let message = this.player.score() > this.dealer.score() ?
+        "Your score is higher, you win!" :
+        "Dealers score is higher, you lose!";
+
+      console.log(message);
+    }
   }
 
   playAgain() {
