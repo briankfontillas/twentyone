@@ -57,7 +57,6 @@ class Participant {
   constructor() {
     this.hand = [];
     this.done = false;
-    this.points = 0;
   }
 
   hit(deck) {
@@ -81,36 +80,7 @@ class Participant {
   }
 
   score() {
-    // return this.hand.reduce((prev, current) => {
-    //   let currentNumber;
-
-    //   if (current["number"] === Card.ACE) {
-    //     currentNumber = Card.convertAce(prev);
-    //   } else if (Card.FACE_CARDS.includes(current["number"])) {
-    //     currentNumber = 10;
-    //   } else {
-    //     currentNumber = current["number"];
-    //   }
-
-    //   return prev + currentNumber;
-    // }, 0);
-    //STUB
-    //--------------------
-    // we have an array [2, 4, A, A, K]
-    // will have an indicator that an ace has been added
-    // iterate, adding all values
-      // if the element is a face card, add 10
-      // if the element an ace,
-        //if indicator is false
-          // set to true
-          // add 11
-        //if indicator is true
-          // add 1
-    // after total is made, if value is over 21, subtract 10 and return value
-    // if not, return value
-
     let hasAce = false;
-
     let totalValue = this.getValues().reduce((total, currentValue) => {
 
       if (Card.FACE_CARDS.includes(currentValue)) {
