@@ -99,6 +99,7 @@ class Player extends Participant {
 }
 
 class Dealer extends Participant {
+  static SAFE_SPOT = 17;
 
   constructor() {
     super();
@@ -114,7 +115,7 @@ class Dealer extends Participant {
   }
 
   withinLimit() {
-    return this.score() >= 17;
+    return this.score() >= Dealer.SAFE_SPOT;
   }
 }
 
