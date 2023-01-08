@@ -53,9 +53,10 @@ class Deck {
 }
 
 class Participant {
+  static EMPTY_HAND = new Array();
 
   constructor() {
-    this.hand = [];
+    this.hand = Participant.EMPTY_HAND.slice();
     this.done = false;
   }
 
@@ -119,6 +120,10 @@ class Dealer extends Participant {
   reveal() {
     this.hidden = false;
   }
+
+  withinLimit() {
+    return this.score() >= 17;
+  }
 }
 
 class TwentyOneGame {
@@ -147,21 +152,37 @@ class TwentyOneGame {
   start() {
     //SPIKE
     this.displayWelcomeMessage();
-    this.initializeDeck();
-    this.dealCards();
 
     while (true) {
-      if (this.player.done || this.player.isBusted() || this.player.hasTwentyOne()) {
+      this.initializeDeck();
+      this.dealCards();
+      console.log(this.deck.cards.length);
+
+      while (true) {
+        if (this.player.done || this.player.isBusted() || this.player.hasTwentyOne()) {
+          this.showAllCards();
+          break;
+        }
         this.showAllCards();
-        break;
+        this.playerTurn();;
+      }
+      while (true) {
+        this.dealer.reveal();
+        if (this.player.isBusted() || this.dealer.isBusted() || this.dealer.withinLimit()) {
+          this.showAllCards();
+          break;
+        }
+        this.showAllCards();
+        this.dealerTurn();
       }
       this.showAllCards();
-      this.playerTurn();;
+      this.displayResult();
+      if (!this.playAgain()) break;
+      this.resetHand();
     }
-    this.dealer.reveal();
-    this.dealerTurn();
-    this.displayResult();
+
     this.displayGoodbyeMessage();
+    
   }
 
   dealCards() {
@@ -187,8 +208,11 @@ class TwentyOneGame {
     let middleLine = [];
     let edges;
     let sides;
-
-    if (player.hidden) playerHand[0]["number"] = "?";
+    if (player.hidden === true) {
+      playerHand[0]["number"] = "?";
+    } else {
+      playerHand[0]["number"] = player.hand[0]["number"];
+    }
 
     for (let count = 1; count <= playerHand.length; count += 1) {
       let number = playerHand[index]["number"];
@@ -240,7 +264,8 @@ class TwentyOneGame {
   }
 
   dealerTurn() {
-    //STUB
+    readline.question("Dealer will hit (press enter to continue)");
+    this.dealer.hit(this.deck.cards);
   }
 
   displayWelcomeMessage() {
@@ -266,8 +291,24 @@ class TwentyOneGame {
     }
   }
 
+  resetHand() {
+    this.player.hand = Participant.EMPTY_HAND.slice();
+    this.dealer.hand = Participant.EMPTY_HAND.slice(); 
+  }
+
   playAgain() {
-    //Stub
+    let again;
+
+    while (true) {
+      console.log("Would you like to play again? (y/n):");
+      again = readline.question("").trimStart();
+
+      if (['y', 'ye', 'yes', 'n', 'no'].includes(again[0].toLowerCase())) break;
+
+      console.log(`"${again}" is not a valid answer`);
+    }
+
+    return again[0].toLowerCase() === 'y';
   }
 }
 
