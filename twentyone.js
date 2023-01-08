@@ -13,10 +13,6 @@ class Card {
     this.number = number;
     this.suit = suit;
   }
-
-  static convertAce(number) {
-    return number > 21 ? 1 : 11;
-  }
 }
 
 class Deck {
@@ -44,16 +40,11 @@ class Deck {
   shuffle() {
     this.cards = SHUFFLE(this.cards);
   }
-
-  deal() {
-    //STUB
-    // does the dealer or the deck deal?
-    // Do we need this since we already have the hit function?
-  }
 }
 
 class Participant {
-  static EMPTY_HAND = new Array();
+  static EMPTY_HAND = [];
+  static WINNING_SCORE = 21;
 
   constructor() {
     this.hand = Participant.EMPTY_HAND.slice();
@@ -73,11 +64,11 @@ class Participant {
   }
 
   hasTwentyOne() {
-    return this.score() === 21;
+    return this.score() === Participant.WINNING_SCORE;
   }
 
   isBusted() {
-    return this.score() > 21;
+    return this.score() > Participant.WINNING_SCORE;
   }
 
   score() {
@@ -96,7 +87,8 @@ class Participant {
       return total + currentValue;
     }, 0);
 
-    return totalValue > 21 && this.getValues().includes(Card.ACE) ? totalValue - 10 : totalValue;
+    return totalValue > Participant.WINNING_SCORE &&
+      this.getValues().includes(Card.ACE) ? totalValue - 10 : totalValue;
   }
 }
 
@@ -114,7 +106,7 @@ class Dealer extends Participant {
   }
 
   hide() {
-    this.hand[0] = "?";
+    this.hidden = true;
   }
 
   reveal() {
@@ -150,25 +142,22 @@ class TwentyOneGame {
   }
 
   start() {
-    //SPIKE
     this.displayWelcomeMessage();
 
     while (true) {
       this.initializeDeck();
       this.dealCards();
-      console.log(this.deck.cards.length);
-
       while (true) {
-        if (this.player.done || this.player.isBusted() || this.player.hasTwentyOne()) {
+        if (this.passesTurn(this.player)) {
           this.showAllCards();
           break;
         }
         this.showAllCards();
-        this.playerTurn();;
+        this.playerTurn();
       }
-      while (true) {
+      while (!this.player.isBusted()) {
         this.dealer.reveal();
-        if (this.player.isBusted() || this.dealer.isBusted() || this.dealer.withinLimit()) {
+        if (this.passesTurn(this.dealer)) {
           this.showAllCards();
           break;
         }
@@ -182,7 +171,15 @@ class TwentyOneGame {
     }
 
     this.displayGoodbyeMessage();
-    
+
+  }
+
+  passesTurn(player) {
+    return player === this.player ?
+      (this.player.done ||
+        this.player.isBusted() ||
+        this.player.hasTwentyOne()) :
+      (this.dealer.isBusted() || this.dealer.withinLimit());
   }
 
   dealCards() {
@@ -191,9 +188,12 @@ class TwentyOneGame {
     players.forEach(player => {
       player.hand.push(this.deck.cards.pop(), this.deck.cards.pop());
     });
+
+    this.dealer.hide();
   }
 
   showAllCards() {
+    console.clear();
     let dealerScoreText = this.dealer.hidden ? "?" : this.dealer.score();
 
     this.showCards(this.dealer);
@@ -208,11 +208,9 @@ class TwentyOneGame {
     let middleLine = [];
     let edges;
     let sides;
-    if (player.hidden === true) {
-      playerHand[0]["number"] = "?";
-    } else {
-      playerHand[0]["number"] = player.hand[0]["number"];
-    }
+
+    playerHand[0]["number"] = player.hidden === true ? "?" :
+      player.hand[0]["number"];
 
     for (let count = 1; count <= playerHand.length; count += 1) {
       let number = playerHand[index]["number"];
@@ -270,6 +268,7 @@ class TwentyOneGame {
 
   displayWelcomeMessage() {
     console.log("Welcome to Twenty-one!");
+    readline.question("press enter to continue...");
   }
 
   displayGoodbyeMessage() {
@@ -282,18 +281,21 @@ class TwentyOneGame {
       console.log("You bust! Game over, you lose!");
     } else if (this.dealer.isBusted()) {
       console.log("Dealer bust! you Win!");
-    } else if (!this.player.isBusted() && !this.dealer.isBusted()) {
-      let message = this.player.score() > this.dealer.score() ?
-        "Your score is higher, you win!" :
-        "Dealers score is higher, you lose!";
-
-      console.log(message);
+    } else if (!this.player.isBusted() && !this.dealer.isBusted() &&
+      this.player.score() > this.dealer.score()) {
+      console.log("Your score is higher, you win!");
+    } else if (!this.player.isBusted() && !this.dealer.isBusted() &&
+      this.player.score() < this.dealer.score()) {
+      console.log("Dealer's score is higher, you lose!");
+    } else {
+      console.log("It's a tie! Scores are the same.");
     }
   }
 
   resetHand() {
     this.player.hand = Participant.EMPTY_HAND.slice();
-    this.dealer.hand = Participant.EMPTY_HAND.slice(); 
+    this.dealer.hand = Participant.EMPTY_HAND.slice();
+    this.player.done = false;
   }
 
   playAgain() {
@@ -303,12 +305,12 @@ class TwentyOneGame {
       console.log("Would you like to play again? (y/n):");
       again = readline.question("").trimStart();
 
-      if (['y', 'ye', 'yes', 'n', 'no'].includes(again[0].toLowerCase())) break;
+      if (['y', 'ye', 'yes', 'n', 'no'].includes(again.toLowerCase()[0])) break;
 
       console.log(`"${again}" is not a valid answer`);
     }
 
-    return again[0].toLowerCase() === 'y';
+    return again.toLowerCase()[0] === 'y';
   }
 }
 
