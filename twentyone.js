@@ -126,7 +126,7 @@ class TwentyOneGame {
     this.displayStructure = null;
   }
 
-  initializeDeck() {
+  initializeGame() {
     let allCards = [];
 
     Deck.getDeck().forEach(suitGroup => {
@@ -137,41 +137,30 @@ class TwentyOneGame {
       });
     });
 
+    this.resetHand();
     this.deck.cards = allCards;
     this.deck.shuffle();
+    this.dealCards();
   }
 
   start() {
     this.displayWelcomeMessage();
 
     while (true) {
-      this.initializeDeck();
-      this.dealCards();
+      this.initializeGame();
       while (true) {
-        if (this.passesTurn(this.player)) {
-          this.showAllCards();
-          break;
-        }
-        this.showAllCards();
+        if (this.passesTurn(this.player)) break;
         this.playerTurn();
       }
       while (!this.player.isBusted()) {
         this.dealer.reveal();
-        if (this.passesTurn(this.dealer)) {
-          this.showAllCards();
-          break;
-        }
-        this.showAllCards();
+        if (this.passesTurn(this.dealer)) break;
         this.dealerTurn();
       }
-      this.showAllCards();
       this.displayResult();
       if (!this.playAgain()) break;
-      this.resetHand();
     }
-
     this.displayGoodbyeMessage();
-
   }
 
   passesTurn(player) {
@@ -242,6 +231,7 @@ class TwentyOneGame {
   }
 
   playerTurn() {
+    this.showAllCards();
 
     let answer;
 
@@ -262,6 +252,7 @@ class TwentyOneGame {
   }
 
   dealerTurn() {
+    this.showAllCards();
     readline.question("Dealer will hit (press enter to continue)");
     this.dealer.hit(this.deck.cards);
   }
@@ -276,6 +267,7 @@ class TwentyOneGame {
   }
 
   displayResult() {
+    this.showAllCards();
 
     if (this.player.isBusted()) {
       console.log("You bust! Game over, you lose!");
