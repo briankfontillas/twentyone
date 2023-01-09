@@ -8,6 +8,7 @@ class Card {
   static sides = " |       |";
   static FACE_CARDS = ["K", "Q", "J"];
   static ACE = "A";
+  static FACE_DOWN = "?";
 
   constructor(number, suit) {
     this.number = number;
@@ -199,7 +200,7 @@ class TwentyOneGame {
     let edges;
     let sides;
 
-    playerHand[0]["number"] = player.hidden === true ? "?" :
+    playerHand[0]["number"] = player.hidden === true ? Card.FACE_DOWN :
       player.hand[0]["number"];
 
     for (let count = 1; count <= playerHand.length; count += 1) {
@@ -240,10 +241,10 @@ class TwentyOneGame {
       console.log("Hit or Stay? (h/s): ");
       answer = readline.question("").trimStart();
 
-      if (["h", "hi", "hit"].includes(answer.toLowerCase()[0])) {
+      if (["h", "hi", "hit"].includes(answer.toLowerCase())) {
         this.player.hit(this.deck.cards);
         break;
-      } else if (["s", "st", "sta", "stay"].includes(answer.toLowerCase()[0])) {
+      } else if (["s", "st", "sta", "stay"].includes(answer.toLowerCase())) {
         this.player.stay();
         break;
       }
@@ -259,11 +260,14 @@ class TwentyOneGame {
   }
 
   displayWelcomeMessage() {
+    console.clear();
     console.log("Welcome to Twenty-one!");
     readline.question("press enter to continue...");
   }
 
   displayGoodbyeMessage() {
+    console.clear();
+    this.showAllCards();
     console.log("Goodbye, thanks for playing!");
   }
 
@@ -298,7 +302,7 @@ class TwentyOneGame {
       console.log("Would you like to play again? (y/n):");
       again = readline.question("").trimStart();
 
-      if (['y', 'ye', 'yes', 'n', 'no'].includes(again.toLowerCase()[0])) break;
+      if (['y', 'ye', 'yes', 'n', 'no'].includes(again.toLowerCase())) break;
 
       console.log(`"${again}" is not a valid answer`);
     }
